@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getFirestore , doc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore , doc, setDoc , collection, addDoc , increment  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 
 
@@ -21,4 +21,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export { initializeApp , getFirestore , db ,    doc, setDoc } 
+export { initializeApp , getFirestore , db ,    doc, setDoc , collection, addDoc , increment  } 
