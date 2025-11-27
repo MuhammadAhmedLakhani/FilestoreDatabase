@@ -3,8 +3,9 @@ import {
     , getFirestore,
     db,
     doc,
-    setDoc,collection, addDoc 
-    ,increment
+    setDoc, collection, addDoc
+    , increment,
+    onSnapshot
 
 
 } from './firebase.js'
@@ -29,7 +30,7 @@ console.log("Working")
 
 
 
-let add = async  () => {
+let add = async () => {
 
     let todo = document.getElementById("todo")
 
@@ -39,20 +40,40 @@ let add = async  () => {
 
     list.innerHTML += `<li> ${todo.value}</li>`
 
-    
-    let ref = collection(db,"todos"); 
-    
-    await   addDoc(ref,{
-        id:increment(1),
-        todo:todo.value
+
+    let ref = collection(db, "todos");
+
+    await addDoc(ref, {
+        id: increment(1),
+        todo: todo.value
     })
-    
+
     console.log("Todo Added")
-    
+
     todo.value = ""
 
 
-}
+
+
+
+
+
+
+    // ...
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -61,6 +82,28 @@ let add = async  () => {
 let todoBtn = document.getElementById("todoBtn")
 
 todoBtn.addEventListener("click", add)
+
+///getting data from firestore database through  onSnapshot method
+
+let getData = () => {
+
+
+    onSnapshot(collection(db, "todos"), (Snapshot) => {
+        // Respond to data
+
+        Snapshot.forEach((doc) => {
+
+            console.log("data---->", doc.data())
+
+        });
+
+    })
+
+}
+
+getData()
+
+
 
 
 
