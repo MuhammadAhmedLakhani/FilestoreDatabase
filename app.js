@@ -93,9 +93,14 @@ let getData = () => {
 
         Snapshot.forEach((doc) => {
 
-            console.log("data---->",doc.id ,doc.data())
+            let {todo} = doc.data()
 
+            list.innerHTML +=  `<li>${todo}</li>`
+            
+    
+            
         });
+        
 
     })
 
