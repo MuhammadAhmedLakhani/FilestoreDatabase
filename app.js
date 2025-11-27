@@ -93,7 +93,7 @@ let getData = () => {
 
         Snapshot.forEach((doc) => {
 
-            console.log("data---->", doc.data())
+            console.log("data---->",doc.id ,doc.data())
 
         });
 
