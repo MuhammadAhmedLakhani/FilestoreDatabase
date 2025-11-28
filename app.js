@@ -7,10 +7,12 @@ import {
     , increment,
     onSnapshot,
     deleteDoc, updateDoc,
-    serverTimestamp ,
+    serverTimestamp,
     query
     , where,
-    orderBy
+    orderBy,
+    limit,startAt,
+    startAfter 
 
 
 } from './firebase.js'
@@ -49,9 +51,9 @@ let add = async () => {
     let ref = collection(db, "todos");
 
     await addDoc(ref, {
-        id:1,
-        todo: todo.value,   
-        timestamp:serverTimestamp()
+        id: 1,
+        todo: todo.value,
+        timestamp: serverTimestamp()
     })
 
     console.log("Todo Added")
@@ -102,12 +104,14 @@ let delTodo = async (id) => {
 
 window.delTodo = delTodo
 
+let lastDoc;
+
+
 let getData = () => {
 
-    let q = query(collection(db, "todos"),where("id", "==",12 ),orderBy("timestamp","desc"))
+    let q = query(collection(db, "todos"), orderBy("todo"), limit(2))
 
     console.log("data lekar aao")
-
     onSnapshot(q, (Snapshot) => {
         // Respond to data
 
@@ -122,35 +126,96 @@ let getData = () => {
 
 
 
+        let arr = []
 
         Snapshot.forEach((doc) => {
 
-            console.log("data--->",doc.data())
+            console.log("data--->", doc.data())
 
             // console.log("change",change.type)
 
-            let { todo , timestamp} = doc.data()
+            let { todo, timestamp } = doc.data()
+
+            arr.push(doc.data())
+
 
             console.log("fetch timestamp--->", timestamp.toDate())
 
             list1.innerHTML += `<li><input disabled id = "${doc.id}"   type = "text"  value = "${todo}" >      <button onClick = delTodo('${doc.id}')>Delete<button  onClick = updateTodo('${doc.id}')>Edit</button></li>  `
 
 
-            console.log(list1.innerHTML)
-
         })
 
         console.log("data fetched")
 
 
+        lastDoc = arr[arr.length - 1]
 
+        console.log(lastDoc.todo)
+    })
+
+}
+
+getData()
+
+
+let loadMore = () => {
+
+
+    let q = query(collection(db, "todos"), orderBy("todo"), startAfter(lastDoc.todo),limit(2))
+
+    console.log("data lekar aao")
+    onSnapshot(q, (Snapshot) => {
+        // Respond to data
+
+        console.log(Snapshot)
+
+        
+        Snapshot.forEach((doc) => {
+
+            console.log("data--->", doc.data())
+
+            // console.log("change",change.type)
+
+            let { todo, timestamp } = doc.data()
+            
+
+
+            // console.log("fetch timestamp--->", todo.toDate())
+
+            list1.innerHTML += `<li><input disabled id = "${doc.id}"   type = "text"  value = "${todo}" >      <button onClick = delTodo('${doc.id}')>Delete<button  onClick = updateTodo('${doc.id}')>Edit</button></li>  `
+
+
+
+        })
+
+        console.log("data fetched paginated")
+
+
+        
 
 
     })
 
 }
 
-getData()
+
+
+setTimeout(()=>{
+    console.log("it a time")
+    loadMore()
+
+
+},5000)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -176,30 +241,30 @@ let updateTodo = (id) => {
 
 
 
-       updated_Todo =  todo_Input.value
+        updated_Todo = todo_Input.value
 
-       console.log(updated_Todo)
+        console.log(updated_Todo)
 
         console.log("updating db now")
 
 
-        updateDB(id,updated_Todo)
+        updateDB(id, updated_Todo)
 
 
 
 
 
-       
+
     })
 
 
-    let updateDB = async (id,updated_Todo)=>{
+    let updateDB = async (id, updated_Todo) => {
 
-        
-        await  updateDoc(doc(db,"todos", id ),{
-            id:1,
-            todo:updated_Todo,
-            timestamp:serverTimestamp()
+
+        await updateDoc(doc(db, "todos", id), {
+            id: 1,
+            todo: updated_Todo,
+            timestamp: serverTimestamp()
         })
         console.log("update done")
 
