@@ -6,7 +6,7 @@ import {
     setDoc, collection, addDoc
     , increment,
     onSnapshot,
-    deleteDoc 
+    deleteDoc, updateDoc
 
 
 } from './firebase.js'
@@ -35,11 +35,11 @@ let add = async () => {
 
     let todo = document.getElementById("todo")
 
-    
+
 
     console.log(todo.value)
 
-    
+
 
 
     let ref = collection(db, "todos");
@@ -90,12 +90,12 @@ let list1 = document.getElementById("list")
 
 //delete function
 
- let delTodo =async (id)=> {
+let delTodo = async (id) => {
     console.log("deleteId", id)
-    await  deleteDoc(doc(db,"todos",id))
+    await deleteDoc(doc(db, "todos", id))
 }
 
-window.delTodo  = delTodo
+window.delTodo = delTodo
 
 let getData = () => {
 
@@ -107,7 +107,7 @@ let getData = () => {
         list1.innerHTML = ""
 
 
-        Snapshot.docChanges().forEach((change)=>{
+        Snapshot.docChanges().forEach((change) => {
 
             console.log(change.type)
 
@@ -117,7 +117,7 @@ let getData = () => {
 
 
         Snapshot.forEach((doc) => {
-            
+
 
             console.log(doc.data())
 
@@ -125,14 +125,19 @@ let getData = () => {
 
             let { todo } = doc.data()
 
-            list1.innerHTML += `<li>${todo}</li><button onClick = delTodo('${doc.id}')>Delete</button>`
+            console.log("fetch todo--->", todo)
+
+            list1.innerHTML += `<li><input disabled id = "${doc.id}"   type = "text"  value = "${todo}" >      <button onClick = delTodo('${doc.id}')>Delete<button  onClick = updateTodo('${doc.id}')>Edit</button></li>  `
+
+
+            console.log(list1.innerHTML)
 
         })
 
         console.log("data fetched")
-        
 
-        
+
+
 
 
     })
@@ -140,6 +145,81 @@ let getData = () => {
 }
 
 getData()
+
+
+
+
+let updateTodo = (id) => {
+
+    let todo_Input = document.getElementById(id)
+
+    todo_Input.disabled = false
+
+    let update = todo_Input.parentNode.childNodes[3]
+
+    update.innerHTML = "Update"
+
+    let updated_Todo
+
+    update.addEventListener('click', () => {
+
+        update.innerHTML = "Edit"
+
+        todo_Input.disabled = true
+
+
+
+
+       updated_Todo =  todo_Input.value
+
+       console.log(updated_Todo)
+
+        console.log("updating db now")
+
+
+        updateDB(id,updated_Todo)
+
+
+
+
+
+       
+    })
+
+
+    let updateDB = async (id,updated_Todo)=>{
+
+        
+        await  updateDoc(doc(db,"todos", id ),{
+            id:1,
+            todo:updated_Todo
+        })
+        console.log("update done")
+
+    }
+
+
+
+
+
+
+
+
+
+    console.log("update function", id)
+    // updateDoc(doc(db,"todos",id))
+
+
+}
+
+window.updateTodo = updateTodo
+
+
+
+
+
+
+
 
 
 
