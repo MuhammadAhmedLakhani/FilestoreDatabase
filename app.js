@@ -9,7 +9,8 @@ import {
     deleteDoc, updateDoc,
     serverTimestamp ,
     query
-    , where
+    , where,
+    orderBy
 
 
 } from './firebase.js'
@@ -103,7 +104,7 @@ window.delTodo = delTodo
 
 let getData = () => {
 
-    let q = query(collection(db, "todos"),where("id" , "==" , 12))
+    let q = query(collection(db, "todos"),where("id", "==",12 ),orderBy("timestamp","desc"))
 
     console.log("data lekar aao")
 
@@ -197,7 +198,8 @@ let updateTodo = (id) => {
         
         await  updateDoc(doc(db,"todos", id ),{
             id:1,
-            todo:updated_Todo
+            todo:updated_Todo,
+            timestamp:serverTimestamp()
         })
         console.log("update done")
 
@@ -231,6 +233,22 @@ window.updateTodo = updateTodo
 
 
 
+
+
+
+
+
+
+
+
+
+//-----indexing
+
+
+//due to advance querry in line      firebase didnot allow this compledx querry
+//instead prompted to do indexing
+//in indexing we follow same querry but made ealier so that no more seaching of large data required as before database is ready with these type of querrry result
+//when indeixng created as in this case then results will be fetched automatically
 
 
 
