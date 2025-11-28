@@ -5,7 +5,8 @@ import {
     doc,
     setDoc, collection, addDoc
     , increment,
-    onSnapshot
+    onSnapshot,
+    deleteDoc 
 
 
 } from './firebase.js'
@@ -34,11 +35,11 @@ let add = async () => {
 
     let todo = document.getElementById("todo")
 
-    let list = document.getElementById("list")
+    
 
     console.log(todo.value)
 
-    list.innerHTML += `<li> ${todo.value}</li>`
+    
 
 
     let ref = collection(db, "todos");
@@ -85,29 +86,60 @@ todoBtn.addEventListener("click", add)
 
 ///getting data from firestore database through  onSnapshot method
 
+let list1 = document.getElementById("list")
+
+//delete function
+
+ let delTodo =async (id)=> {
+    console.log("deleteId", id)
+    await  deleteDoc(doc(db,"todos",id))
+}
+
+window.delTodo  = delTodo
+
 let getData = () => {
 
+    console.log("data lekar aao")
 
     onSnapshot(collection(db, "todos"), (Snapshot) => {
         // Respond to data
 
+        list1.innerHTML = ""
+
+
+        Snapshot.docChanges().forEach((change)=>{
+
+            console.log(change.type)
+
+        })
+
+
+
+
         Snapshot.forEach((doc) => {
-
-            let {todo} = doc.data()
-
-            list.innerHTML +=  `<li>${todo}</li>`
             
-    
-            
-        });
+
+            console.log(doc.data())
+
+            // console.log("change",change.type)
+
+            let { todo } = doc.data()
+
+            list1.innerHTML += `<li>${todo}</li><button onClick = delTodo('${doc.id}')>Delete</button>`
+
+        })
+
+        console.log("data fetched")
         
+
+        
+
 
     })
 
 }
 
 getData()
-
 
 
 
